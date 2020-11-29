@@ -16,39 +16,45 @@ import com.mygdx.game.Bodies.Player;
 
 public class GameScreen implements Screen {
 
-    private static final float SCENE_WIDTH = 120;
-    private static final float SCENE_HEIGHT = 70;
+    protected static final float SCENE_WIDTH = 120;
+    protected static final float SCENE_HEIGHT = 70;
 
-    private Stage stage;
-    private Game game;
-    private World world;
+    protected Stage stage;
+    protected Game game;
+    protected World world;
     private Box2DDebugRenderer debugRenderer;
-    private Player player1;
-    private Player player2;
-    private Ball ball;
-//    private BallContactListener contactListener;
+    protected Ball ball;
 
-    public GameScreen(Game aGame) {
+    protected static int playersAmount = 5;
+    protected float timeBetweenUpdates = 0.1f;
+
+    protected float timeSinceLastUpdate = 0;
+    protected Player[] playerList;
+
+    protected GameScreen(Game aGame) {
         game = aGame;
+
         Gdx.input.setInputProcessor(stage);
 
         stage = new Stage(new FitViewport(SCENE_WIDTH, SCENE_HEIGHT,  new OrthographicCamera(SCENE_WIDTH, SCENE_HEIGHT)));
-        debugRenderer = new Box2DDebugRenderer();
-        world = new World(new Vector2(0, 0), true);
-        player1 = new Player(world,SCENE_WIDTH/4,SCENE_HEIGHT/2);
-        player2 = new Player(world,SCENE_WIDTH/4 + 5,SCENE_HEIGHT/2 + 5);
-        ball = new Ball(world, SCENE_WIDTH/5,SCENE_HEIGHT/2);
 
-        stage.addActor(player1);
-        stage.addActor(player2);
+        debugRenderer = new Box2DDebugRenderer();
+
+        world = new World(new Vector2(0, 0), true);
+
+        createStage();
+
+        initializeGame();
+
+    }
+
+    private void createStage() {
+        ball = new Ball(world, SCENE_WIDTH/5,SCENE_HEIGHT/2);
         stage.addActor(ball);
-//        contactListener = new BallContactListener();
-//        world.setContactListener(contactListener);
         stage.addActor(new Floor(world,0,0, SCENE_WIDTH,2,-30));
         stage.addActor(new Floor(world,0,0, 2, Gdx.graphics.getHeight(),-30));
         stage.addActor(new Floor(world,SCENE_WIDTH - 2, 0, 2, SCENE_HEIGHT,-30));
         stage.addActor(new Floor(world,0,SCENE_HEIGHT - 2, SCENE_WIDTH, 2 ,-30));
-
     }
 
     @Override
@@ -69,25 +75,21 @@ public class GameScreen implements Screen {
         stage.draw();
 
         debugRenderer.render(world, stage.getCamera().combined);
+
         world.step(delta, 3, 3);
     }
 
 
-    private void update(float deltaTime) {
-        Vector2 keys = new Vector2(0, 0);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            keys.x -= 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            keys.x += 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.UP))
-            keys.y += 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            keys.y -= 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) & player1.getBallDistance(ball) < 6)//& contactListener.isTouching)
-            ball.shoot(player1.body.getPosition());
-
-        player1.move(keys, deltaTime);
+    protected void update(float deltaTime) {
         stage.act();
+    }
+
+    private void initializeGame(){
+        playerList = new Player[playersAmount];
+        for(int i = 0; i < playersAmount; i++){
+            playerList[i] = new Player(world,SCENE_WIDTH/4,SCENE_HEIGHT/4 + 10 * i);
+            stage.addActor(playerList[i]);
+        }
     }
 
     @Override
