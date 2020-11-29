@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Network.Serveur;
 
 public class GameServerScreen extends GameScreen {
 
@@ -12,6 +13,7 @@ public class GameServerScreen extends GameScreen {
 
     public GameServerScreen(Game aGame) {
         super(aGame);
+        Serveur server = new Serveur();
     }
 
     @Override
