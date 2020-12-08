@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.mygdx.game.Bodies.Player;
+import com.mygdx.game.Network2.ClientKryo;
 
 import java.util.Arrays;
 
@@ -11,11 +12,13 @@ public class GameClientScreen extends GameScreen {
 
     private boolean[] playerInputs = {false, false, false, false, false};
 
-    private boolean serverUpdateAvailable = false;
     private float[] serverAnswer = new float[2 + playersAmount * 2];
+
+    private ClientKryo client;
 
     public GameClientScreen(Game aGame) {
         super(aGame);
+        client = new ClientKryo(playersAmount);
     }
 
     @Override
@@ -29,10 +32,12 @@ public class GameClientScreen extends GameScreen {
             timeSinceLastUpdate = 0;
         }
 
-        if(serverUpdateAvailable){
-            ball.setPosition(serverAnswer[0], serverAnswer[1]);
+        if(client.getServerUpdateAvailable()){
+            serverAnswer = client.getActorsPositions();
+            //System.out.println("Server Answer ! " + Arrays.toString(serverAnswer));
+            ball.setClientPosition(serverAnswer[0], serverAnswer[1]);
             for(int i = 0; i < playersAmount; i++){
-                playerList[i].setPosition(serverAnswer[i + 2], serverAnswer[i + 2]);
+                playerList[i].setClientPosition(serverAnswer[(i * 2) + 2], serverAnswer[(i * 2) + 3]);
             }
         }
 
@@ -41,10 +46,9 @@ public class GameClientScreen extends GameScreen {
     }
 
     private void sendPlayerInputs(){
-
-        //sendUDP(playerInputs);
+        client.sendClientInputs(playerInputs);
         System.out.println("Sending player inputs to the server");
-        System.out.println(Arrays.toString(playerInputs));
+        //System.out.println(Arrays.toString(playerInputs));
 
     }
 
@@ -58,10 +62,4 @@ public class GameClientScreen extends GameScreen {
 
     }
 
-    private void onServerAnswer(float[] answer){
-
-        serverAnswer = answer;
-        serverUpdateAvailable = true;
-
-    }
 }

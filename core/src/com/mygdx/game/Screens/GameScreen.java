@@ -26,7 +26,7 @@ public class GameScreen implements Screen {
     protected Ball ball;
 
     protected static int playersAmount = 5;
-    protected float timeBetweenUpdates = 0.1f;
+    protected float timeBetweenUpdates = 0.05f;
 
     protected float timeSinceLastUpdate = 0;
     protected Player[] playerList;
@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
 
         stage = new Stage(new FitViewport(SCENE_WIDTH, SCENE_HEIGHT,  new OrthographicCamera(SCENE_WIDTH, SCENE_HEIGHT)));
 
-        debugRenderer = new Box2DDebugRenderer();
+        //debugRenderer = new Box2DDebugRenderer();
 
         world = new World(new Vector2(0, 0), true);
 

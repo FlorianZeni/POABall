@@ -4,16 +4,20 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Network.Serveur;
+import com.mygdx.game.Network2.ServerKryo;
+
+import java.util.Arrays;
+
 
 public class GameServerScreen extends GameScreen {
 
     private float[] serverMessage = new float[2 + playersAmount * 2];
-    private boolean[][] playerInputs = new boolean[playersAmount][2 + playersAmount * 2];
+    private boolean[][] playerInputs = new boolean[playersAmount][5];
+    ServerKryo server;
 
     public GameServerScreen(Game aGame) {
         super(aGame);
-        Serveur server = new Serveur();
+        server = new ServerKryo(playersAmount);
     }
 
     @Override
@@ -23,8 +27,9 @@ public class GameServerScreen extends GameScreen {
 
         if(timeSinceLastUpdate > timeBetweenUpdates) {
             getActorsPositions();
-            //sendUDP(serverMessage);
+            server.sendActorPositions(serverMessage);
             getHostInputs();
+            getClientsInputs();
             applyPlayerInputs(deltaTime);
         }
 
@@ -35,19 +40,15 @@ public class GameServerScreen extends GameScreen {
     private void getActorsPositions(){
         serverMessage[0] = ball.getPosition().x;
         serverMessage[1] = ball.getPosition().y;
-        for(int i = 0; i < playersAmount; i+=2){
-            serverMessage[i+2] = playerList[i].getPosition().x;
-            serverMessage[i+3] = playerList[i].getPosition().y;
+        for(int i = 0; i < playersAmount; i++){
+            serverMessage[(i * 2) + 2] = playerList[i].getPosition().x;
+            serverMessage[(i * 2) + 3] = playerList[i].getPosition().y;
         }
-    }
-
-    private void onClientMessageReceived(boolean[] message, int client){
-        playerInputs[client] = message;
     }
 
     private void applyPlayerInputs(float deltatime){
         Vector2 direction;
-
+        //System.out.println(Arrays.deepToString(playerInputs));
         for(int i = 0; i < playersAmount; i++){
             direction = new Vector2(0,0);
             if (playerInputs[i][0])
@@ -74,4 +75,13 @@ public class GameServerScreen extends GameScreen {
         playerInputs[0][4] = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
     }
+
+    private void getClientsInputs(){
+        for(int i = 1; i < playersAmount; i ++){
+            this.playerInputs[i] = server.getPlayerInput()[i-1];
+        }
+
+        //System.out.println("Player Inputs : " + Arrays.deepToString(this.playerInputs));
+    }
+
 }

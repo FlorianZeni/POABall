@@ -102,4 +102,8 @@ public class Player extends Image  {
         return Functions.Distance(this.getPosition(), ball.getPosition());
     }
 
+    public void setClientPosition(float x, float y){
+        body.setTransform(new Vector2(x, y), 0);
+    }
+
 }

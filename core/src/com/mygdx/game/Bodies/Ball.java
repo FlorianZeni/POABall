@@ -81,6 +81,7 @@ public class Ball extends Image  {
         speed = body.getLinearVelocity();
         //body.applyForce(new Vector2( new Vector2(-50 * speed.x * abs(speed.x), -50 * speed.y * abs(speed.y))), body.getLocalCenter(), true);
         this.setPosition(body.getPosition().x-this.getWidth()/2,body.getPosition().y-this.getHeight()/2);
+
 //        if(shooting){
 //            shootingResetCount += 1;
 //            body.applyForceToCenter(shootingDirection.scl(shootForce), true);
@@ -106,4 +107,7 @@ public class Ball extends Image  {
         return body.getPosition();
     }
 
+    public void setClientPosition(float x, float y){
+        body.setTransform(new Vector2(x, y), 0);
+    }
 }
