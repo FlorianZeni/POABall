@@ -74,7 +74,7 @@ public class GameScreen implements Screen {
 
         stage.draw();
 
-        debugRenderer.render(world, stage.getCamera().combined);
+        // debugRenderer.render(world, stage.getCamera().combined);
 
         world.step(delta, 3, 3);
     }
