@@ -110,4 +110,9 @@ public class Ball extends Image  {
     public void setClientPosition(float x, float y){
         body.setTransform(new Vector2(x, y), 0);
     }
+
+    public void resetVelocity(){
+        body.setLinearVelocity(0,0);
+    }
+
 }

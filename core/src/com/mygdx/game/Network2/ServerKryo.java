@@ -82,4 +82,9 @@ public class ServerKryo extends Listener {
     public boolean[][] getPlayerInput(){
         return playerInput;
     }
+
+    public void terminate(){
+        server.close();
+        server.stop();
+    }
 }

@@ -88,5 +88,6 @@ public class TitleScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        game.dispose();
     }
 }

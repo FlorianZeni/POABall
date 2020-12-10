@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class ClientKryo extends Listener {
     static Client client;
-    static String ip = "localhost";
+    static String ip = "25.72.65.150";
     static int tcpPort = 27960, udpPort = 27961;
 
     private float[] actorsPositions;
@@ -85,5 +85,10 @@ public class ClientKryo extends Listener {
     public float[] getActorsPositions(){
         serverUpdateAvailable = false;
         return actorsPositions;
+    }
+
+    public void terminate(){
+        client.close();
+        client.stop();
     }
 }

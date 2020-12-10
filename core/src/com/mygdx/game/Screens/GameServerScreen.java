@@ -6,8 +6,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Network2.ServerKryo;
 
-import java.util.Arrays;
-
 
 public class GameServerScreen extends GameScreen {
 
@@ -31,6 +29,9 @@ public class GameServerScreen extends GameScreen {
             getHostInputs();
             getClientsInputs();
             applyPlayerInputs(deltaTime);
+            if(checkForGoal()){
+                resetActors();
+            }
         }
 
         super.update(deltaTime);
@@ -82,6 +83,30 @@ public class GameServerScreen extends GameScreen {
         }
 
         //System.out.println("Player Inputs : " + Arrays.deepToString(this.playerInputs));
+    }
+
+    private boolean checkForGoal(){
+        if(ball.getPosition().x < 0){
+            scoreRed += 1;
+            return true;
+        }
+        else if(ball.getPosition().x > SCENE_WIDTH){
+            scoreBlue += 1;
+            return true;
+        }
+        return false;
+    }
+
+    private void resetActors(){
+        ball.setClientPosition(SCENE_WIDTH / 2, SCENE_HEIGHT / 2);
+        ball.resetVelocity();
+
+    }
+
+    @Override
+    public void dispose(){
+        server.terminate();
+        super.dispose();
     }
 
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.mygdx.game.Bodies.Player;
+
 import com.mygdx.game.Network2.ClientKryo;
 
 import java.util.Arrays;
@@ -60,6 +61,12 @@ public class GameClientScreen extends GameScreen {
         playerInputs[3] = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         playerInputs[4] = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
+    }
+
+    @Override
+    public void dispose(){
+        client.terminate();
+        super.dispose();
     }
 
 }
