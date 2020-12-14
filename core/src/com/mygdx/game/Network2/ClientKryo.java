@@ -5,11 +5,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ClientKryo extends Listener {
     static Client client;
-    static String ip = "25.72.65.150";
+    static String ip = "localhost";
     static int tcpPort = 27960, udpPort = 27961;
 
     private float[] actorsPositions;

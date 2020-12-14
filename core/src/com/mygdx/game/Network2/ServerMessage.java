@@ -1,7 +1,7 @@
 package com.mygdx.game.Network2;
 
 public class ServerMessage {
-    public float[] actorsPositions;
+    private float[] actorsPositions;
 
     public ServerMessage(float[] actorsPositions){
         this.actorsPositions = actorsPositions;

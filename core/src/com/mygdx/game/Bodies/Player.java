@@ -22,9 +22,13 @@ public class Player extends Image  {
     public Body body;
     private World world;
     private Vector2 speed;
+    private static int playerAmount = 1;
 
     public Player(World aWorld, float pos_x, float pos_y){
-        super(new Texture("player.png"));
+        super(new Texture("player" + playerAmount + ".png"));
+
+        playerAmount ++;
+
         this.setPosition(pos_x,pos_y);
         this.setScale( 0.0125f, 0.0125f);
 

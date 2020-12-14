@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
     private BitmapFont font = new BitmapFont();
     private Batch batch = new SpriteBatch();
 
-    protected static int playersAmount = 5;
+    protected static int playersAmount = 4;
     protected float timeBetweenUpdates = 0.05f;
 
     protected float timeSinceLastUpdate = 0;
@@ -104,6 +104,7 @@ public class GameScreen implements Screen {
 
 
     protected void update(float deltaTime) {
+
         stage.act();
     }
 
@@ -115,30 +116,37 @@ public class GameScreen implements Screen {
         }
     }
 
+    protected boolean checkForGoal(){
+        if(ball.getPosition().x < 0){
+            scoreRed += 1;
+            return true;
+        }
+        else if(ball.getPosition().x > SCENE_WIDTH){
+            scoreBlue += 1;
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void resize(int width, int height) {
-        System.out.println("Resize");
     }
 
     @Override
     public void pause() {
-        System.out.println("Pause");
         dispose();
     }
 
     @Override
     public void resume() {
-        System.out.println("Resume");
     }
 
     @Override
     public void hide() {
-        System.out.println("Hiding");
     }
 
     @Override
     public void dispose() {
-        System.out.println("Disposing");
         stage.dispose();
         font.dispose();
         batch.dispose();

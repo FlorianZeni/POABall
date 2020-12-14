@@ -48,7 +48,7 @@ public class GameClientScreen extends GameScreen {
 
     private void sendPlayerInputs(){
         client.sendClientInputs(playerInputs);
-        System.out.println("Sending player inputs to the server");
+        //System.out.println("Sending player inputs to the server");
         //System.out.println(Arrays.toString(playerInputs));
 
     }
