@@ -5,17 +5,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Network2.ServerKryo;
+import com.mygdx.game.Tchat.ChatBox;
 
 
 public class GameServerScreen extends GameScreen {
 
     private float[] serverMessage = new float[2 + playersAmount * 2];
     private boolean[][] playerInputs = new boolean[playersAmount][5];
-    ServerKryo server;
+    private ServerKryo server;
+    private ChatBox chatbox;
 
     public GameServerScreen(Game aGame) {
         super(aGame);
         server = new ServerKryo(playersAmount);
+        chatbox = new ChatBox("Server", true);
+        chatbox.create();
+
     }
 
     @Override

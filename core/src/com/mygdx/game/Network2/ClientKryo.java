@@ -8,14 +8,14 @@ import java.io.IOException;
 
 public class ClientKryo extends Listener {
     static Client client;
-    static String ip = "localhost";
+    static String ip = "25.80.133.159";
     static int tcpPort = 27960, udpPort = 27961;
 
     private float[] actorsPositions;
     private boolean serverUpdateAvailable = false;
     private int playerAmount;
 
-//    public static void main(String[] args){
+//    public static vo25.103id main(String[] args){
 //        ClientKryo client = new ClientKryo();
 //        int help = 0;
 //        while(help < 100){

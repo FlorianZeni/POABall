@@ -64,7 +64,6 @@ public class ServerKryo extends Listener {
             ClientMessage msg = (ClientMessage) p;
             playerInput[connections.indexOf(c)] = msg.getInputs();
             //System.out.println("Received A message from Client : " + Arrays.toString(msg.getInputs()));
-
         }
     }
 

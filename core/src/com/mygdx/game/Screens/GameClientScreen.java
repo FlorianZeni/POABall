@@ -6,6 +6,8 @@ import com.badlogic.gdx.Input;
 import com.mygdx.game.Bodies.Player;
 
 import com.mygdx.game.Network2.ClientKryo;
+import com.mygdx.game.Tchat.ChatBox;
+import com.mygdx.game.Tchat.ClientChat;
 
 import java.util.Arrays;
 
@@ -16,10 +18,13 @@ public class GameClientScreen extends GameScreen {
     private float[] serverAnswer = new float[2 + playersAmount * 2];
 
     private ClientKryo client;
+    private ChatBox chatbox;
 
     public GameClientScreen(Game aGame) {
         super(aGame);
         client = new ClientKryo(playersAmount);
+        chatbox = new ChatBox("Client", false, "25.80.133.159");
+        chatbox.create();
     }
 
     @Override
