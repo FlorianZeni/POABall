@@ -25,7 +25,7 @@ public class TitleScreen implements Screen {
         game = aGame;
         stage = new Stage(new ScreenViewport());
 
-        Label title = new Label("Box2D Basic demo", MyGdxGame.skin,"big-black");
+        Label title = new Label("POA BALL", MyGdxGame.skin,"big-black");
         title.setAlignment(Align.center);
         title.setY(Gdx.graphics.getHeight()*2/3);
         title.setWidth(Gdx.graphics.getWidth());

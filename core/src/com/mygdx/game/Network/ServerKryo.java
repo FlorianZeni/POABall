@@ -20,10 +20,6 @@ public class ServerKryo extends Listener {
                                         {false, false, false, false, false},
                                         {false, false, false, false, false}};
 
-//    public static void main(String[] args){
-//        ServerKryo server = new ServerKryo();
-//        server.sendActorPositions(new float[]{0,0,0,0,5,5,0,0,0,0,5,5});
-//    }
 
     public ServerKryo(int playerAmount){
         this.playerAmount = playerAmount;

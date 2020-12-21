@@ -92,6 +92,18 @@ public class GameServerScreen extends GameScreen {
         //System.out.println("Player Inputs : " + Arrays.deepToString(this.playerInputs));
     }
 
+    protected boolean checkForGoal(){
+        if(ball.getPosition().x < 0){
+            scoreRed += 1;
+            return true;
+        }
+        else if(ball.getPosition().x > SCENE_WIDTH){
+            scoreBlue += 1;
+            return true;
+        }
+        return false;
+    }
+
     private void resetActors(){
         ball.setClientPosition(SCENE_WIDTH / 2, SCENE_HEIGHT / 2);
         ball.resetVelocity();

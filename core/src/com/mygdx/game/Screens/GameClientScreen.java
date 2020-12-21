@@ -9,9 +9,11 @@ import com.mygdx.game.Network.ClientKryo;
 import com.mygdx.game.Tchat.ChatBox;
 import com.mygdx.game.Utils.FixSizedArrayList;
 import com.mygdx.game.Utils.Functions;
+import org.graalvm.compiler.hotspot.stubs.VerifyOopStub;
 
 public class GameClientScreen extends GameScreen {
 
+    // Inputs Related Attributes
     private boolean[] playerInputs = {false, false, false, false, false};
     private boolean inputChanged = true;
 
@@ -20,16 +22,26 @@ public class GameClientScreen extends GameScreen {
     private ClientKryo client;
     private ChatBox chatbox;
 
+    // Prediction Related Attributes
     private final int logsSize = 10;
+    private final float positionTolerance = 0.25f;
     private FixSizedArrayList<Vector2> positionLogs = new FixSizedArrayList<>(logsSize);
     private int positionIndex;
-
     private Vector2 targetPos = new Vector2(0,0);
+
+    // Interpolation Related Attributes
+    private float timeSinceLastServerUpdate = 0;
+    private float[] previousServerAnswer = new float[2 + playersAmount * 2];
+    private float interpolationCoef;
+
+    // Client Initialization Related Attributes
     private boolean clientInitialized = false;
     private int clientIndex = -1;
     private int serverResponseTime = 0;
 
-    private boolean clientPredictionEnabled = true;
+    // Client Settings
+    private final boolean clientPredictionEnabled = true;
+    private final boolean interpolationEnabled = true;
 
     public GameClientScreen(Game aGame) {
         super(aGame);
@@ -42,6 +54,7 @@ public class GameClientScreen extends GameScreen {
     protected void update(float deltaTime) {
 
         timeSinceLastUpdate += deltaTime;
+        timeSinceLastServerUpdate += deltaTime;
 
         if(clientInitialized) {
 
@@ -50,48 +63,82 @@ public class GameClientScreen extends GameScreen {
             if(clientPredictionEnabled)
                 applyPlayerInputs(deltaTime);
 
+            if(interpolationEnabled){
+                // Actors Positions are updated at the update loop frequency
+                interpolationCoef = Math.min(1, timeSinceLastServerUpdate / timeBetweenUpdates);
+
+                ball.setClientPosition(interpolationCoef * serverAnswer[0] + (1 - interpolationCoef) * previousServerAnswer[0],
+                                       interpolationCoef * serverAnswer[1] + (1 - interpolationCoef) * previousServerAnswer[1]);
+
+                for (int i = 0; i < playersAmount; i++) {
+                    targetPos.x = interpolationCoef * serverAnswer[(i * 2) + 2] + (1 - interpolationCoef) * previousServerAnswer[(i * 2) + 2];
+                    targetPos.y = interpolationCoef * serverAnswer[(i * 2) + 3] + (1 - interpolationCoef) * previousServerAnswer[(i * 2) + 3];
+
+                    if(i != clientIndex + 1)
+                        playerList[i].setClientPosition(targetPos);
+                }
+            }
+
             if (timeSinceLastUpdate > timeBetweenUpdates || inputChanged) {
+                // Sending new inputs to the server as soon as a change is detected
                 if(inputChanged)
                     sendPlayerInputs();
+
+                // Gathering previous positions for server reconciliation
                 positionLogs.add(playerList[clientIndex + 1].getPosition());
+
                 timeSinceLastUpdate = 0;
             }
 
             if (client.getServerUpdateAvailable()) {
-                serverAnswer = client.getActorsPositions();
-                //System.out.println("Server Answer ! " + Arrays.toString(serverAnswer));
+                timeSinceLastServerUpdate = 0;
 
-                ball.setClientPosition(serverAnswer[0], serverAnswer[1]);
+                // Keeping the previous position to allow interpolation
+                previousServerAnswer = serverAnswer;
+
+                // Fetch new Actors Positions from the kryonet Client
+                serverAnswer = client.getActorsPositions();
+
+                // Update actors positions as soon as the update is received
+                if(!interpolationEnabled)
+                    ball.setClientPosition(serverAnswer[0], serverAnswer[1]);
 
                 for (int i = 0; i < playersAmount; i++) {
 
                     targetPos.x = serverAnswer[(i * 2) + 2];
                     targetPos.y = serverAnswer[(i * 2) + 3];
+
                     if (clientPredictionEnabled) {
                         // Server Reconciliation regarding the current player
                         if (i == clientIndex + 1) {
+                            // Prediction is only used for the current player
                             if (positionLogs.size() < logsSize) {
+                                // Not enabled until our positions log is built
                                 playerList[i].setClientPosition(targetPos);
-                            } else {
+                            }
+                            else {
                                 if (Math.min(Functions.Distance(positionLogs.get(positionIndex), targetPos),
-                                        Functions.Distance(playerList[i].getPosition(), targetPos)) > 0.5) {
-                                    System.out.println("Pos Corrected");
-                                    System.out.println("LOG : " + Functions.Distance(positionLogs.get(positionIndex), targetPos));
-                                    System.out.println("CURRENT : " + Functions.Distance(playerList[i].getPosition(), targetPos));
+                                        Functions.Distance(playerList[i].getPosition(), targetPos)) > positionTolerance) {
+                                    // If the distance is too great with the server's position, player is reset
                                     playerList[i].setClientPosition(targetPos);
                                 }
                             }
 
                         } else {
-                            playerList[i].setClientPosition(targetPos);
+                            // Updates other player's location
+                            if(!interpolationEnabled)
+                                playerList[i].setClientPosition(targetPos);
                         }
                     } else {
-                        playerList[i].setClientPosition(targetPos);
+                        // Client prediction disabled
+                        if(!interpolationEnabled)
+                            playerList[i].setClientPosition(targetPos);
                     }
                 }
             }
         }
         else{
+            // Initialization
             if(timeSinceLastUpdate > timeBetweenUpdates){
 
                 clientIndex = client.getClientIndex();
@@ -115,9 +162,6 @@ public class GameClientScreen extends GameScreen {
 
     private void sendPlayerInputs(){
         client.sendClientInputs(playerInputs);
-        //System.out.println("Sending player inputs to the server");
-        //System.out.println(Arrays.toString(playerInputs));
-
     }
 
     private void getPlayerInputs()
@@ -158,13 +202,7 @@ public class GameClientScreen extends GameScreen {
         if (playerInputs[3])
             direction.x -= 1;
 
-//        Client shall not be abble to actually shoot the ball since its position is set by the server wherever it is.
-//        if (playerInputs[4] & playerList[clientIndex + 1].getBallDistance(ball) < 6)
-//            ball.shoot(playerList[clientIndex + 1].getPosition());
-
         playerList[clientIndex + 1].move(direction, deltatime);
-
-
     }
 
     @Override
@@ -172,5 +210,4 @@ public class GameClientScreen extends GameScreen {
         client.terminate();
         super.dispose();
     }
-
 }
