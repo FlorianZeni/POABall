@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Network2.ServerKryo;
+import com.mygdx.game.Network.ServerKryo;
 import com.mygdx.game.Tchat.ChatBox;
 
 
@@ -18,8 +18,8 @@ public class GameServerScreen extends GameScreen {
     public GameServerScreen(Game aGame) {
         super(aGame);
         server = new ServerKryo(playersAmount);
-        chatbox = new ChatBox("Server", true);
-        chatbox.create();
+//        chatbox = new ChatBox("Florian", true);
+//        chatbox.create();
 
     }
 
@@ -28,15 +28,17 @@ public class GameServerScreen extends GameScreen {
 
         timeSinceLastUpdate += deltaTime;
 
+        getHostInputs();
+        getClientsInputs();
+        applyPlayerInputs(deltaTime);
+
         if(timeSinceLastUpdate > timeBetweenUpdates) {
             getActorsPositions();
             server.sendActorPositions(serverMessage);
-            getHostInputs();
-            getClientsInputs();
-            applyPlayerInputs(deltaTime);
             if(checkForGoal()){
                 resetActors();
             }
+            timeSinceLastUpdate = 0;
         }
 
         super.update(deltaTime);

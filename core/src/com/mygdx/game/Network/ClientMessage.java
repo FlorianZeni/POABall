@@ -1,4 +1,4 @@
-package com.mygdx.game.Network2;
+package com.mygdx.game.Network;
 
 public class ClientMessage {
     private boolean[] inputs;

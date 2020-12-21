@@ -1,4 +1,4 @@
-package com.mygdx.game.Network2;
+package com.mygdx.game.Network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -34,6 +34,7 @@ public class ServerKryo extends Listener {
         server.getKryo().register(ServerMessage.class);
         server.getKryo().register(boolean[].class);
         server.getKryo().register(float[].class);
+        server.getKryo().register(int.class);
 
         server.addListener(this);
 
@@ -56,6 +57,8 @@ public class ServerKryo extends Listener {
             connections.add(c);
             System.out.println("Added a new Connection to the list");
         }
+
+        c.sendTCP(connections.indexOf(c));
     }
 
     public void received(Connection c, Object p){

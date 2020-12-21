@@ -1,4 +1,4 @@
-package com.mygdx.game.Network2;
+package com.mygdx.game.Network;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -8,26 +8,19 @@ import java.io.IOException;
 
 public class ClientKryo extends Listener {
     static Client client;
-    static String ip = "25.80.133.159";
+    static String ip = "localhost";
     static int tcpPort = 27960, udpPort = 27961;
 
     private float[] actorsPositions;
     private boolean serverUpdateAvailable = false;
+    private int clientIndex = -1;
+    private int serverResponseTime = 0;
     private int playerAmount;
 
-//    public static vo25.103id main(String[] args){
-//        ClientKryo client = new ClientKryo();
-//        int help = 0;
-//        while(help < 100){
-//            help++;
-//        }
-//
-//        client.sendClientInputs(new boolean[]{true, false, true, false, false});
-//
-//    }
+    private Connection serverConnection;
 
     public ClientKryo(int playerAmount){
-        System.out.println("Initializing CLient");
+        System.out.println("Initializing Client");
 
         client = new Client();
 
@@ -37,6 +30,8 @@ public class ClientKryo extends Listener {
         client.getKryo().register(ServerMessage.class);
         client.getKryo().register(boolean[].class);
         client.getKryo().register(float[].class);
+        client.getKryo().register(int.class);
+
 
         client.start();
 
@@ -63,7 +58,15 @@ public class ClientKryo extends Listener {
             ServerMessage msg = (ServerMessage) p;
             actorsPositions = msg.getActorsPositions();
             serverUpdateAvailable = true;
+            c.getReturnTripTime();
             //System.out.println("Client Received Updated Actors Positions" + Arrays.toString(actorsPositions));
+        }
+
+        if(p instanceof Integer){
+            c.updateReturnTripTime();
+            serverConnection = c;
+            System.out.println("Packet is " + p);
+            clientIndex = (int) p;
         }
     }
 
@@ -84,6 +87,15 @@ public class ClientKryo extends Listener {
     public float[] getActorsPositions(){
         serverUpdateAvailable = false;
         return actorsPositions;
+    }
+
+    public int getClientIndex(){
+        return clientIndex;
+    }
+
+    public int getServerResponseTime(){
+        System.out.println("Response time is " + serverConnection.getReturnTripTime());
+        return serverConnection.getReturnTripTime();
     }
 
     public void terminate(){

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -99,15 +100,19 @@ public class Player extends Image  {
     }
 
     public Vector2 getPosition(){
-        return body.getPosition();
+        return new Vector2(body.getPosition());
     }
 
     public double getBallDistance(Ball ball){
         return Functions.Distance(this.getPosition(), ball.getPosition());
     }
 
-    public void setClientPosition(float x, float y){
-        body.setTransform(new Vector2(x, y), 0);
+//    public void setClientPosition(float x, float y){
+//        body.setTransform(new Vector2(x, y), 0);
+//    }
+
+    public void setClientPosition(Vector2 pos){
+        body.setTransform(pos, 0);
     }
 
 }
