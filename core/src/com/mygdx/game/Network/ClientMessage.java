@@ -2,9 +2,9 @@ package com.mygdx.game.Network;
 
 public class ClientMessage {
     private boolean[] inputs;
-    private int id;
+    private long id;
 
-    public ClientMessage(boolean[] inputs, int id){
+    public ClientMessage(boolean[] inputs, long id){
         this.inputs = inputs;
         this.id = id;
     }
@@ -15,5 +15,5 @@ public class ClientMessage {
         return inputs;
     }
 
-    public int getId(){return id;}
+    public long getId(){return id;}
 }

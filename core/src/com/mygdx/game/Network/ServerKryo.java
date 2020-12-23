@@ -13,9 +13,9 @@ public class ServerKryo extends Listener {
     private static int tcpPort = 27960,  udpPort= 27961;
 
     private List<Connection> connections = new ArrayList<Connection>();
-    private int[] clientMsgIds = {-1, -1, -1, -1};
+    private long[] clientMsgIds = {-1, -1, -1, -1};
     private int playerAmount;
-    private int msgId = 0;
+    private long msgId = 0;
     private boolean[][] playerInput =  {{false, false, false, false, false},
                                         {false, false, false, false, false},
                                         {false, false, false, false, false},

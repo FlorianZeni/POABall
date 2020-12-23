@@ -8,15 +8,15 @@ import java.io.IOException;
 
 public class ClientKryo extends Listener {
     static Client client;
-    static String ip = "localhost";
+    static String ip = "25.72.65.150";
     static int tcpPort = 27960, udpPort = 27961;
 
     private float[] actorsPositions;
     private boolean serverUpdateAvailable = false;
     private int clientIndex = -1;
     private int playerAmount;
-    private int msgId = 0;
-    private int serverMsgId = -1;
+    private long msgId = 0;
+    private long serverMsgId = -1;
 
     private Connection serverConnection;
 
@@ -32,7 +32,6 @@ public class ClientKryo extends Listener {
         client.getKryo().register(boolean[].class);
         client.getKryo().register(float[].class);
         client.getKryo().register(int.class);
-
 
         client.start();
 

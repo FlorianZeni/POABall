@@ -37,6 +37,9 @@ public class GameScreen implements Screen {
     protected float timeSinceLastUpdate = 0;
     protected Player[] playerList;
 
+    protected float[] posList = {SCENE_WIDTH/4, SCENE_WIDTH/4 - 10, SCENE_WIDTH/4, SCENE_WIDTH/4 + 20,
+            3*SCENE_WIDTH/4, SCENE_WIDTH/4 - 10, 3*SCENE_WIDTH/4, SCENE_WIDTH/4 + 20};
+
     protected int scoreRed = 0;
     protected int scoreBlue = 0;
 
@@ -103,8 +106,9 @@ public class GameScreen implements Screen {
 
     private void initializeGame(){
         playerList = new Player[playersAmount];
+
         for(int i = 0; i < playersAmount; i++){
-            playerList[i] = new Player(world,SCENE_WIDTH/4,SCENE_HEIGHT/4 + 10 * i);
+            playerList[i] = new Player(world, posList[2 * i], posList[2 * i + 1]);
             stage.addActor(playerList[i]);
         }
     }

@@ -2,9 +2,9 @@ package com.mygdx.game.Network;
 
 public class ServerMessage {
     private float[] actorsPositions;
-    private int id;
+    private long id;
 
-    public ServerMessage(float[] actorsPositions, int id){
+    public ServerMessage(float[] actorsPositions, long id){
         this.actorsPositions = actorsPositions;
         this.id = id;
     }
@@ -15,5 +15,5 @@ public class ServerMessage {
         return actorsPositions;
     }
 
-    public int getId(){return id;}
+    public long getId(){return id;}
 }

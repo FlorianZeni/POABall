@@ -84,4 +84,8 @@ public class Player extends Image  {
         body.setTransform(pos, 0);
     }
 
+    public void resetVelocity(){
+        body.setLinearVelocity(0,0);
+    }
+
 }

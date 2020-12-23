@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Bodies.Player;
 import com.mygdx.game.Network.ServerKryo;
 import com.mygdx.game.Tchat.ChatBox;
 
@@ -35,10 +36,12 @@ public class GameServerScreen extends GameScreen {
         if(timeSinceLastUpdate > timeBetweenUpdates) {
             getActorsPositions();
             server.sendActorPositions(serverMessage);
-            if(checkForGoal()){
-                resetActors();
-            }
+
             timeSinceLastUpdate = 0;
+        }
+
+        if(checkForGoal()){
+            resetActors();
         }
 
         super.update(deltaTime);
@@ -105,6 +108,14 @@ public class GameServerScreen extends GameScreen {
     }
 
     private void resetActors(){
+        Vector2 initPos;
+
+        for(int i = 0; i < playersAmount; i++) {
+            initPos = new Vector2(posList[2 * i], posList[2 * i + 1]);
+            playerList[i].setClientPosition(initPos);
+            playerList[i].resetVelocity();
+        }
+
         ball.setClientPosition(SCENE_WIDTH / 2, SCENE_HEIGHT / 2);
         ball.resetVelocity();
 
