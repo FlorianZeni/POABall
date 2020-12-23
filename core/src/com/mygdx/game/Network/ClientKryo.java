@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class ClientKryo extends Listener {
     static Client client;
-    static String ip = "25.72.65.150";
+    static String ip = "localhost";
     static int tcpPort = 27960, udpPort = 27961;
 
     private float[] actorsPositions;

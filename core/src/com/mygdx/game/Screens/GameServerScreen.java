@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Bodies.Player;
 import com.mygdx.game.Network.ServerKryo;
 import com.mygdx.game.Tchat.ChatBox;
 
@@ -91,8 +90,6 @@ public class GameServerScreen extends GameScreen {
         for(int i = 1; i < playersAmount; i ++){
             this.playerInputs[i] = server.getPlayerInput()[i-1];
         }
-
-        //System.out.println("Player Inputs : " + Arrays.deepToString(this.playerInputs));
     }
 
     protected boolean checkForGoal(){
