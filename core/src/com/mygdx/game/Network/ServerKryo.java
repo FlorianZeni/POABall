@@ -13,9 +13,10 @@ public class ServerKryo extends Listener {
     private static int tcpPort = 27960,  udpPort= 27961;
 
     private List<Connection> connections = new ArrayList<Connection>();
+    private int[] clientMsgIds = {-1, -1, -1, -1};
     private int playerAmount;
+    private int msgId = 0;
     private boolean[][] playerInput =  {{false, false, false, false, false},
-                                        {false, false, false, false, false},
                                         {false, false, false, false, false},
                                         {false, false, false, false, false},
                                         {false, false, false, false, false}};
@@ -61,7 +62,14 @@ public class ServerKryo extends Listener {
         if(p instanceof ClientMessage){
 
             ClientMessage msg = (ClientMessage) p;
-            playerInput[connections.indexOf(c)] = msg.getInputs();
+
+            if(msg.getId() > clientMsgIds[connections.indexOf(c)]){
+                System.out.println("Message has been accepted");
+                playerInput[connections.indexOf(c)] = msg.getInputs();
+                clientMsgIds[connections.indexOf(c)] = msg.getId();
+            }else{
+                System.out.println("An older message has been ignored");
+            }
             //System.out.println("Received A message from Client : " + Arrays.toString(msg.getInputs()));
         }
     }
@@ -72,7 +80,8 @@ public class ServerKryo extends Listener {
 
     public void sendActorPositions(float[] actorPositions){
         //System.out.println("Sending positions to clients");
-        ServerMessage msg = new ServerMessage(actorPositions);
+        msgId ++;
+        ServerMessage msg = new ServerMessage(actorPositions, msgId);
         server.sendToAllUDP(msg);
     }
 

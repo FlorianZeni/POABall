@@ -7,11 +7,12 @@ public class Message {
     String absender = "", text="";
     LocalTime time;
     private  static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-    public Message(){};
+    public Message(){}
+
     public Message(String absender, String text){
         this.absender = absender;
         this.text = text;
-    };
+    }
 
     public String getMessage(){
         return "[" + time.format(dtf) + " " + absender + "] " + text + "\n";

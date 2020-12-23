@@ -18,12 +18,12 @@ public class ChatBox {
 
     public ChatBox(String pseudo, boolean isHost){
         this.pseudo = pseudo;
-        this.isHost = isHost;
+        ChatBox.isHost = isHost;
     }
 
     public ChatBox(String pseudo, boolean isHost, String ip){
         this.pseudo = pseudo;
-        this.isHost = isHost;
+        ChatBox.isHost = isHost;
         if(!isHost){
             ClientChat.ip = ip;
         }

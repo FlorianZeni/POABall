@@ -14,8 +14,9 @@ public class ClientKryo extends Listener {
     private float[] actorsPositions;
     private boolean serverUpdateAvailable = false;
     private int clientIndex = -1;
-    private int serverResponseTime = 0;
     private int playerAmount;
+    private int msgId = 0;
+    private int serverMsgId = -1;
 
     private Connection serverConnection;
 
@@ -56,9 +57,15 @@ public class ClientKryo extends Listener {
         //System.out.println("Client received a packet");
         if(p instanceof ServerMessage){
             ServerMessage msg = (ServerMessage) p;
-            actorsPositions = msg.getActorsPositions();
-            serverUpdateAvailable = true;
-            c.getReturnTripTime();
+
+            if(msg.getId() > serverMsgId){
+                actorsPositions = msg.getActorsPositions();
+                serverUpdateAvailable = true;
+                serverMsgId = msg.getId();
+                System.out.println("Accepted a msg with id " + serverMsgId);
+            }else{
+                System.out.println("Refused an old msg");
+            }
             //System.out.println("Client Received Updated Actors Positions" + Arrays.toString(actorsPositions));
         }
 
@@ -71,7 +78,8 @@ public class ClientKryo extends Listener {
     }
 
     public void sendClientInputs(boolean[] inputs){
-        ClientMessage msg = new ClientMessage(inputs);
+        msgId ++;
+        ClientMessage msg = new ClientMessage(inputs, msgId);
         client.sendUDP(msg);
         //System.out.println("Message sent " + Arrays.toString(msg.getInputs()));
     }

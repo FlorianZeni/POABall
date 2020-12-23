@@ -3,13 +3,11 @@ package com.mygdx.game.Screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Network.ClientKryo;
 import com.mygdx.game.Tchat.ChatBox;
 import com.mygdx.game.Utils.FixSizedArrayList;
 import com.mygdx.game.Utils.Functions;
-import org.graalvm.compiler.hotspot.stubs.VerifyOopStub;
 
 public class GameClientScreen extends GameScreen {
 
@@ -27,7 +25,7 @@ public class GameClientScreen extends GameScreen {
     private final float positionTolerance = 0.25f;
     private FixSizedArrayList<Vector2> positionLogs = new FixSizedArrayList<>(logsSize);
     private int positionIndex;
-    private Vector2 targetPos = new Vector2(0,0);
+    private Vector2 targetPos = new Vector2(0, 0);
 
     // Interpolation Related Attributes
     private float timeSinceLastServerUpdate = 0;
@@ -56,14 +54,14 @@ public class GameClientScreen extends GameScreen {
         timeSinceLastUpdate += deltaTime;
         timeSinceLastServerUpdate += deltaTime;
 
-        if(clientInitialized) {
+        if (clientInitialized) {
 
             getPlayerInputs();
 
-            if(clientPredictionEnabled)
+            if (clientPredictionEnabled)
                 applyPlayerInputs(deltaTime);
 
-            if(interpolationEnabled){
+            if (interpolationEnabled) {
                 // Actors Positions are updated at the update loop frequency
                 interpolationCoef = Math.min(1, timeSinceLastServerUpdate / timeBetweenUpdates);
 
@@ -74,16 +72,16 @@ public class GameClientScreen extends GameScreen {
                     targetPos.x = interpolationCoef * serverAnswer[(i * 2) + 2] + (1 - interpolationCoef) * previousServerAnswer[(i * 2) + 2];
                     targetPos.y = interpolationCoef * serverAnswer[(i * 2) + 3] + (1 - interpolationCoef) * previousServerAnswer[(i * 2) + 3];
 
-                    if(i != clientIndex + 1)
+                    if (i != clientIndex + 1 || !clientPredictionEnabled)
                         playerList[i].setClientPosition(targetPos);
                 }
             }
 
-            if (timeSinceLastUpdate > timeBetweenUpdates || inputChanged) {
-                // Sending new inputs to the server as soon as a change is detected
-                if(inputChanged)
-                    sendPlayerInputs();
+            // Sending new inputs to the server as soon as a change is detected
+            if (inputChanged)
+                sendPlayerInputs();
 
+            if (timeSinceLastUpdate > timeBetweenUpdates) {
                 // Gathering previous positions for server reconciliation
                 positionLogs.add(playerList[clientIndex + 1].getPosition());
 
@@ -100,7 +98,7 @@ public class GameClientScreen extends GameScreen {
                 serverAnswer = client.getActorsPositions();
 
                 // Update actors positions as soon as the update is received
-                if(!interpolationEnabled)
+                if (!interpolationEnabled)
                     ball.setClientPosition(serverAnswer[0], serverAnswer[1]);
 
                 for (int i = 0; i < playersAmount; i++) {
@@ -115,8 +113,7 @@ public class GameClientScreen extends GameScreen {
                             if (positionLogs.size() < logsSize) {
                                 // Not enabled until our positions log is built
                                 playerList[i].setClientPosition(targetPos);
-                            }
-                            else {
+                            } else {
                                 if (Math.min(Functions.Distance(positionLogs.get(positionIndex), targetPos),
                                         Functions.Distance(playerList[i].getPosition(), targetPos)) > positionTolerance) {
                                     // If the distance is too great with the server's position, player is reset
@@ -126,33 +123,30 @@ public class GameClientScreen extends GameScreen {
 
                         } else {
                             // Updates other player's location
-                            if(!interpolationEnabled)
+                            if (!interpolationEnabled)
                                 playerList[i].setClientPosition(targetPos);
                         }
                     } else {
                         // Client prediction disabled
-                        if(!interpolationEnabled)
+                        if (!interpolationEnabled)
                             playerList[i].setClientPosition(targetPos);
                     }
                 }
             }
-        }
-        else{
+        } else {
             // Initialization
-            if(timeSinceLastUpdate > timeBetweenUpdates){
+            if (timeSinceLastUpdate > timeBetweenUpdates) {
 
                 clientIndex = client.getClientIndex();
                 serverResponseTime = client.getServerResponseTime();
                 positionIndex = logsSize - 1 - Math.round(serverResponseTime / timeBetweenUpdates / 1000);
 
-                if(clientIndex != -1){
+                if (clientIndex != -1) {
                     clientInitialized = true;
                     System.out.println("Client has been initialized");
                 }
 
-
                 timeSinceLastUpdate = 0;
-
             }
         }
 
@@ -160,36 +154,35 @@ public class GameClientScreen extends GameScreen {
 
     }
 
-    private void sendPlayerInputs(){
+    private void sendPlayerInputs() {
         client.sendClientInputs(playerInputs);
     }
 
-    private void getPlayerInputs()
-    {
+    private void getPlayerInputs() {
         inputChanged = false;
-        if(playerInputs[0] != Gdx.input.isKeyPressed(Input.Keys.UP)){
+        if (playerInputs[0] != Gdx.input.isKeyPressed(Input.Keys.UP)) {
             playerInputs[0] = !playerInputs[0];
             inputChanged = true;
         }
-        if(playerInputs[1] != Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+        if (playerInputs[1] != Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             playerInputs[1] = !playerInputs[1];
             inputChanged = true;
         }
-        if(playerInputs[2] != Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+        if (playerInputs[2] != Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             playerInputs[2] = !playerInputs[2];
             inputChanged = true;
         }
-        if(playerInputs[3] != Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+        if (playerInputs[3] != Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             playerInputs[3] = !playerInputs[3];
             inputChanged = true;
         }
-        if(playerInputs[4] != Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+        if (playerInputs[4] != Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             playerInputs[4] = !playerInputs[4];
             inputChanged = true;
         }
     }
 
-    private void applyPlayerInputs(float deltatime){
+    private void applyPlayerInputs(float deltatime) {
 
         Vector2 direction = new Vector2(0, 0);
 
@@ -206,7 +199,7 @@ public class GameClientScreen extends GameScreen {
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         client.terminate();
         super.dispose();
     }
